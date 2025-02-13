@@ -30,6 +30,32 @@
 
 ---
 
+## **📸 Screenshots**  
+
+<p align="center">
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012221.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012244.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012312.png" width="30%" />
+  <br>
+  <b>1️⃣ Certificate Generation Portal</b> &nbsp;&nbsp;&nbsp; <b>2️⃣ Certificate Download as PDF</b> &nbsp;&nbsp;&nbsp; <b>3️⃣ MetaMask Connection</b>  
+  <br><br>
+
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012334.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012400.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012418.png" width="30%" />
+  <br>
+  <b>4️⃣ NFT Minting Dashboard </b> &nbsp;&nbsp;&nbsp; <b>5️⃣ NFT Minting & Processing Stage</b> &nbsp;&nbsp;&nbsp; <b>6️⃣ NFT Save to Blockchain</b>  
+  <br><br>
+
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012440.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012501.png" width="30%" />
+  <img src="SCREENSHOTS/Screenshot%202024-11-19%20012508.png" width="30%" />
+  <br>
+  <b>7️⃣ Unique ID & HASH Details </b> &nbsp;&nbsp;&nbsp; <b>8️⃣ Certificate Verification Portal</b> &nbsp;&nbsp;&nbsp; <b>9️⃣ Verification Successful</b>  
+</p>
+
+---
+
 ## **🚀 Tech Stack Used**  
 
 | **Category**              | **Technologies**                           | **Purpose**                         |
@@ -42,14 +68,6 @@
 |                          | MetaMask, Web3.js                        | Wallet Interaction                  |
 |                          | SHA-256                                  | Hashing for Security                |
 | **📜 Certificate Processing** | SVG, jsPDF                        | Certificate Template & PDF Generation |
-
----
-
-## **📸 Screenshots**  
-
-| Certificate Generation | NFT Minting | Verification |
-|----------------|----------------|----------------|
-| ![Cert Generation](docs/Screenshots/cert_gen.png) | ![NFT Minting](docs/Screenshots/nft_minting.png) | ![Verification](docs/Screenshots/verify.png) |
 
 ---
 
