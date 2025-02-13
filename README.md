@@ -53,3 +53,35 @@
 
 ---
 
+## **⚡ Features**
+✔ **Tamper-Proof Certificates** - Blockchain ensures certificates cannot be altered.  
+✔ **Decentralized & Secure** - No central authority, making it highly secure.  
+✔ **Instant Verification** - Just upload the certificate, and blockchain validates it.  
+✔ **NFT Integration** - Converts certificates into unique, verifiable NFTs.  
+
+---
+
+## 🤝 Contributing  
+Contributions are welcome! If you’d like to contribute, feel free to **fork** the repo and submit a **pull request**.  
+
+---
+
+## 📩 Contact  
+
+<p align="center">
+  <a href="mailto:sujitwork08@gmail.com">
+    <img src="https://img.shields.io/badge/✉️ Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/sujitmahapatra" target="_blank">
+    <img src="https://img.shields.io/badge/⚡ GitHub-333?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://linkedin.com/in/mr-sm25" target="_blank">
+    <img src="https://img.shields.io/badge/🔗 LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+  </a>
+</p>
+
+---
+
+⭐ **If you like this project, don't forget to star the repo!** ⭐  
