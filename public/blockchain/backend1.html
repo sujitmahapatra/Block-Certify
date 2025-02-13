@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Minting Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: auto;
+        }
+
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #connectButton {
+            background-color: #007bff;
+            margin-top: -80px;
+        }
+
+        #connectButton:hover {
+            background-color: #0056b3;
+        }
+
+        #logoutButton {
+            background-color: #dc3545;
+        }
+
+        #logoutButton:hover {
+            background-color: #c82333;
+        }
+
+        #saveButton {
+            background-color: #28a745;
+        }
+
+        #saveButton:hover {
+            background-color: #218838;
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: center;
+            padding: 50px;
+            font-size: 24px;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #dashboard {
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            margin-top: -90px;
+        }
+
+        #dashboard h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            margin: 20px;
+        }
+
+        #fileInput {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #generateButton {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #generateButton:hover {
+            background-color: #218838;
+        }
+
+        #hashResult {
+            margin-top: 20px;
+            word-wrap: break-word;
+            max-width: 100%;
+            color: #333;
+        }
+
+        #progressContainer {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #progressBar {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+            height: 25px;
+            position: relative;
+        }
+
+        #progressBarFill {
+            height: 100%;
+            background: #007bff;
+            width: 0;
+            transition: width 0.1s;
+        }
+
+        #progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: white;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modalContent {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #modalContent h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        #modalContent input[type="text"],
+        #modalContent input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #modalContent input[type="text"] {
+            border: 1px solid #ccc;
+        }
+
+        #modalContent input[type="submit"] {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #modalContent input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #modalContent .close {
+            background: #dc3545;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        #modalContent .close:hover {
+            background: #c82333;
+        }
+
+        #summary {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #summary h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        #summary p {
+            margin: 10px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <img src="metamask.webp" alt="MetaMask Animation" width="380" height="380">
+    <button id="connectButton">Connect with MetaMask</button>
+    <div id="loading">Connecting to MetaMask...</div>
+
+    <div id="dashboard" style="display: none;">
+        <h1>Welcome to Your Dashboard</h1>
+        <p id="accountId"></p>
+        <button id="logoutButton">Logout</button>
+        <div class="container" id="uploadSection" style="display: none;">
+            <h2>NFT MINT</h2>
+            <input type="file" id="fileInput">
+            <button id="generateButton">MINT</button>
+            <div id="progressContainer">
+                <div id="progressBar">
+                    <div id="progressBarFill">
+                        <span id="progressText">0%</span>
+                    </div>
+                </div>
+                <div id="progressMessage">Minting & Processing...</div>
+            </div>
+            <div id="hashResult"></div>
+            <button id="saveButton" style="display: none;">Save in Blockchain</button>
+        </div>
+    </div>
+
+    <div id="modal">
+        <div id="modalContent">
+            <h2>Save Hash to Blockchain</h2>
+            <form id="form">
+                <input type="text" id="title" placeholder="Enter Title" required>
+                <input type="hidden" id="hashID">
+                <input type="hidden" id="dateTime">
+                <input type="hidden" id="projectID">
+                <input type="hidden" id="metaMaskID">
+                <input type="hidden" id="fileName">
+                <input type="submit" value="Save">
+                <button type="button" class="close">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="summary">
+        <h2>Hash Details</h2>
+        <p><strong>Hash ID:</strong> <span id="summaryHashID"></span></p>
+        <p><strong>Title:</strong> <span id="summaryTitle"></span></p>
+        <p><strong>Date:</strong> <span id="summaryDate"></span></p>
+        <p><strong>Project ID:</strong> <span id="summaryProjectID"></span></p>
+        <p><strong>MetaMask ID:</strong> <span id="summaryMetaMaskID"></span></p>
+        <p><strong>File Name:</strong> <span id="summaryFileName"></span></p>
+    </div>
+    <div id="modal" style="display: none;">
+        <div id="modalContent">
+            <h2>Save Hash Details</h2>
+            <form id="saveForm">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="hashID">Hash ID:</label>
+                <input type="text" id="hashID" name="hashID" required>
+
+                <label for="dateTime">Date and Time:</label>
+                <input type="datetime-local" id="dateTime" name="dateTime" required>
+
+                <label for="metaMaskID">MetaMask ID:</label>
+                <input type="text" id="metaMaskID" name="metaMaskID" required>
+
+                <label for="projectID">Project ID:</label>
+                <input type="text" id="projectID" name="projectID">
+
+                <label for="fileName">File Name:</label>
+                <input type="text" id="fileName" name="fileName">
+
+                <button type="submit">Save</button>
+                <button type="button" id="closeModalButton">Close</button>
+            </form>
+        </div>
+    </div>
+    <!-- Include js-sha256 library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBmOKHNXM38s_0Gkpvq9xHVIvvh1DOGwv4",
+        authDomain: "masterx-5c711.firebaseapp.com",
+        databaseURL: "https://masterx-5c711-default-rtdb.firebaseio.com",
+        projectId: "masterx-5c711",
+        storageBucket: "masterx-5c711.appspot.com",
+        messagingSenderId: "157783499488",
+        appId: "1:157783499488:web:4507df08258f4823622685",
+        measurementId: "G-0JVV5L6XE2"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    // Element references
+    const connectButton = document.getElementById('connectButton');
+    const loadingDiv = document.getElementById('loading');
+    const dashboardDiv = document.getElementById('dashboard');
+    const accountIdP = document.getElementById('accountId');
+    const logoutButton = document.getElementById('logoutButton');
+    const uploadSection = document.getElementById('uploadSection');
+    const generateButton = document.getElementById('generateButton');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressText = document.getElementById('progressText');
+    const hashResultDiv = document.getElementById('hashResult');
+    const saveButton = document.getElementById('saveButton');
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('form');
+    const titleInput = document.getElementById('title');
+    const hashIDInput = document.getElementById('hashID');
+    const dateTimeInput = document.getElementById('dateTime');
+    const projectIDInput = document.getElementById('projectID');
+    const metaMaskIDInput = document.getElementById('metaMaskID');
+    const fileNameInput = document.getElementById('fileName');
+    const closeModalButton = document.querySelector('#modalContent .close');
+    const summaryDiv = document.getElementById('summary');
+    const summaryHashID = document.getElementById('summaryHashID');
+    const summaryTitle = document.getElementById('summaryTitle');
+    const summaryDate = document.getElementById('summaryDate');
+    const summaryProjectID = document.getElementById('summaryProjectID');
+    const summaryMetaMaskID = document.getElementById('summaryMetaMaskID');
+    const summaryFileName = document.getElementById('summaryFileName');
+    const particleCanvas = document.getElementById('particleCanvas'); // New canvas element for particles
+
+    let currentHash = '';
+    let currentFileName = '';
+    let userAccount = '';
+
+    async function connectMetaMask() {
+        if (window.ethereum) {
+            try {
+                loadingDiv.style.display = 'block';
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                userAccount = accounts[0];
+                loadingDiv.style.display = 'none';
+                connectButton.style.display = 'none';
+                dashboardDiv.style.display = 'block';
+                uploadSection.style.display = 'block';
+                accountIdP.textContent = `Connected Account: ${userAccount}`;
+            } catch (error) {
+                loadingDiv.style.display = 'none';
+                console.error("User rejected the connection request or other error:", error);
+                alert("Failed to connect to MetaMask. Check the console for details.");
+            }
+        } else {
+            alert("MetaMask is not installed. Please install MetaMask and try again.");
+        }
+    }
+
+    connectButton.addEventListener('click', connectMetaMask);
+
+    logoutButton.addEventListener('click', () => {
+        dashboardDiv.style.display = 'none';
+        connectButton.style.display = 'block';
+        accountIdP.textContent = '';
+    });
+
+    generateButton.addEventListener('click', async () => {
+        const fileInput = document.getElementById('fileInput');
+        hashResultDiv.innerHTML = '';
+        progressContainer.style.display = 'block';
+
+        if (fileInput.files.length === 0) {
+            hashResultDiv.innerHTML = 'Please select a file first.';
+            progressContainer.style.display = 'none';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        currentFileName = file.name;
+
+        try {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBarFill.style.width = progress + '%';
+                progressText.textContent = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    processFile(file);
+                }
+            }, 70); // Simulates 5 to 7 seconds of processing time
+        } catch (error) {
+            hashResultDiv.innerHTML = 'Error computing hash: ' + error.message;
+            progressContainer.style.display = 'none';
+        }
+    });
+
+    async function processFile(file) {
+        try {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const buffer = event.target.result;
+                const hash = sha256.create();
+                hash.update(new Uint8Array(buffer));
+                const hashHex = hash.hex();
+                currentHash = hashHex;
+                hashResultDiv.innerHTML = `SHA-256 Hash: ${hashHex}`;
+                saveButton.style.display = 'block';
+                progressContainer.style.display = 'none';
+            };
+            reader.readAsArrayBuffer(file);
+        } catch (error) {
+            hashResultDiv.innerHTML = 'Error computing hash: ' + error.message;
+            progressContainer.style.display = 'none';
+        }
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const title = titleInput.value;
+        const hashID = hashIDInput.value;
+        const dateTime = dateTimeInput.value;
+        const projectID = projectIDInput.value;
+        const metaMaskID = metaMaskIDInput.value;
+        const fileName = fileNameInput.value;
+
+        try {
+            await set(ref(db, 'nfts/' + hashID), {
+                title,
+                hashID,
+                dateTime,
+                projectID,
+                metaMaskID,
+                fileName
+            });
+            console.log("Document successfully written with ID: ", hashID);
+
+            summaryHashID.textContent = hashID;
+            summaryTitle.textContent = title;
+            summaryDate.textContent = dateTime;
+            summaryProjectID.textContent = projectID;
+            summaryMetaMaskID.textContent = metaMaskID;
+            summaryFileName.textContent = fileName;
+
+            summaryDiv.style.display = 'block';
+            modal.style.display = 'none';
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            alert('Error saving data to Firebase. Check console for details.');
+        }
+    });
+
+    saveButton.addEventListener('click', () => {
+        modal.style.display = 'block';
+        hashIDInput.value = currentHash;
+        dateTimeInput.value = new Date().toISOString();
+        projectIDInput.value = generateProjectID();
+        metaMaskIDInput.value = userAccount;
+        fileNameInput.value = currentFileName;
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    function generateProjectID() {
+        return 'PROJECT-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Particle Animation
+    const ctx = particleCanvas.getContext('2d');
+    let particles = [];
+    const numParticles = 100;
+
+    function createParticle(x, y) {
+        return {
+            x: x,
+            y: y,
+            size: Math.random() * 5 + 1,
+            speedX: Math.random() * 3 - 1.5,
+            speedY: Math.random() * 3 - 1.5,
+            color: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`
+        };
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(createParticle(Math.random() * particleCanvas.width, Math.random() * particleCanvas.height));
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+        particles.forEach(particle => {
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
+            if (particle.x > particleCanvas.width || particle.x < 0) particle.speedX *= -1;
+            if (particle.y > particleCanvas.height || particle.y < 0) particle.speedY *= -1;
+
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            ctx.fillStyle = particle.color;
+            ctx.fill();
+        });
+        requestAnimationFrame(animateParticles);
+    }
+
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+    initParticles();
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+    });
+</script>
+    </body>
+    </html>

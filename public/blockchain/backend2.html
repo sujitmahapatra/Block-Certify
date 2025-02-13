@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification</title>
+    <style>
+       body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #6a9bcf, #ffb6b6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    padding: 30px 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+h1 {
+    font-size: 1.8rem;
+    color: #2d3748;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+    font-size: 1rem;
+    color: #555;
+}
+
+input[type="file"]:focus {
+    outline: none;
+    border-color: #3182ce;
+}
+
+button {
+    width: 100%;
+    padding: 12px 16px;
+    background: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+#progressContainer {
+    display: none;
+    margin-top: 25px;
+    text-align: center;
+}
+
+#progressBar {
+    width: 100%;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    height: 24px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#progressBarFill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #56ab2f, #a8e063);
+    text-align: center;
+    color: white;
+    line-height: 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    transition: width 0.4s ease;
+}
+
+#progressMessage {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: #4a5568;
+}
+
+#verifyResult {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #edf2f7;
+    border: 1px solid #cbd5e0;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2d3748;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#verifyResult.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
+}
+
+.modal-header {
+    background: #4caf50;
+    color: white;
+    padding: 15px;
+    font-size: 1.2rem;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-close {
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #000000;
+}
+
+.modal-body {
+    padding: 20px;
+    color: #2d3748;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.modal-body button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-body button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Certificate Verification Portal</h1>
+        <input type="file" id="verifyFileInput" class="form-group">
+        <button id="verifyButton" class="form-group">Verify</button>
+        <div id="progressContainer">
+            <div id="progressBar">
+                <div id="progressBarFill">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+            <div id="progressMessage">Processing...</div>
+        </div>
+        <div id="verifyResult"></div>
+    </div>
+
+    <div id="modal">
+        <div id="modalContent">
+            <div class="modal-header">
+                <div class="modal-title">Verification Result</div>
+                <button type="button" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="verifyMessage"></p>
+                <button id="modalCloseButton">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmOKHNXM38s_0Gkpvq9xHVIvvh1DOGwv4",
+            authDomain: "masterx-5c711.firebaseapp.com",
+            databaseURL: "https://masterx-5c711-default-rtdb.firebaseio.com",
+            projectId: "masterx-5c711",
+            storageBucket: "masterx-5c711.appspot.com",
+            messagingSenderId: "157783499488",
+            appId: "1:157783499488:web:4507df08258f4823622685",
+            measurementId: "G-0JVV5L6XE2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const verifyButton = document.getElementById('verifyButton');
+        const verifyFileInput = document.getElementById('verifyFileInput');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressText = document.getElementById('progressText');
+        const progressMessage = document.getElementById('progressMessage');
+        const verifyResultDiv = document.getElementById('verifyResult');
+        const modal = document.getElementById('modal');
+        const verifyMessage = document.getElementById('verifyMessage');
+        const closeModalButton = document.querySelector('#modal .modal-close');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+
+        function showVerifyModal(message) {
+            verifyMessage.innerHTML = message;
+            modal.style.display = 'block';
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+        }
+
+        verifyButton.addEventListener('click', () => {
+            const file = verifyFileInput.files[0];
+            if (file) {
+                verifyFile(file);
+            } else {
+                verifyResultDiv.innerHTML = 'Please select a file for verification.';
+            }
+        });
+
+        async function verifyFile(file) {
+            try {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const buffer = event.target.result;
+                    const hash = sha256.create();
+                    hash.update(new Uint8Array(buffer));
+                    const hashHex = hash.hex();
+
+                    // Show progress bar and update progress
+                    let progress = 0;
+                    progressContainer.style.display = 'block';
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        if (progress > 100) {
+                            progress = 100;
+                            clearInterval(interval);
+                            progressContainer.style.display = 'none';
+                            verifyResultDiv.classList.add('show');
+                            verifyResultDiv.innerHTML = `SHA-256 Hash: <strong>${hashHex}</strong>`;
+                            checkHashInDatabase(hashHex);
+                        }
+                        progressBarFill.style.width = progress + '%';
+                        progressText.textContent = progress + '%';
+                    }, 500); // Update every 500ms for a total of ~5 seconds
+                };
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                verifyResultDiv.innerHTML = 'Error verifying file: ' + error.message;
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        async function checkHashInDatabase(hashHex) {
+            try {
+                const snapshot = await get(ref(db, 'nfts/' + hashHex));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const resultMessage = `
+                        <strong>Verification successful!</strong><br>
+                        <strong>Title:</strong> ${data.title}<br>
+                        <strong>Date:</strong> ${data.dateTime}<br>
+                        <strong>Project ID:</strong> ${data.projectID}<br>
+                        <strong>File Name:</strong> ${data.fileName}<br>
+                        <strong>Hash ID:</strong> ${data.hashID}<br>
+                        <strong>MetaMask ID:</strong> ${data.metaMaskID}
+                    `;
+                    showVerifyModal(resultMessage);
+                } else {
+                    showVerifyModal('Verification failed! Hash ID not found in the database.');
+                }
+            } catch (error) {
+                console.error('Error checking hash in database:', error);
+                showVerifyModal('Error', 'Error checking hash ID in the database. Check console for details.');
+            }
+        }
+
+        closeModalButton.addEventListener('click', hideModal);
+        modalCloseButton.addEventListener('click', hideModal);
+    </script>
+</body>
+</html>
